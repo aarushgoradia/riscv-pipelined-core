@@ -7,7 +7,7 @@ This repository contains a work-in-progress SystemVerilog implementation of a 5-
 ## Motivation & Design Choices
 
 - **From single-cycle to pipeline**  
-  Having previously implemented a simple single-cycle (non-RISC-V) CPU, I wanted to deepen my understanding of modern microarchitectures by targeting the industry-standard RISC-V ISA and adding pipelining for higher throughput.
+  Having previously implemented a simple single-cycle (LC3 ISA) CPU, I wanted to deepen my understanding of modern microarchitectures by targeting the industry-standard RISC-V ISA and adding pipelining for higher throughput.
 
 - **Why RV32I & five stages**  
   RV32I provides a clean, well-documented base ISA. A classic five-stage pipeline (IF → ID → EX → MEM → WB) balances simplicity with performance, letting us process one instruction per cycle once the pipeline is full.
@@ -74,7 +74,7 @@ This repository contains a work-in-progress SystemVerilog implementation of a 5-
 - **Complete UVM testbench** with directed and constrained-random tests, functional coverage  
 - **Add dynamic branch predictor** (1-bit/2-bit BHT, BTB) for control-hazard reduction  
 - **Synthesis & FPGA prototyping** on a small development board  
-- **Documentation**: finalize datapath diagram (insert here) and include timing/performance analysis  
+- **Documentation**: finalize datapath diagram (computer drawn instead of by hand) and include timing/performance analysis  
 
 ---
 
