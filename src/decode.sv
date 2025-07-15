@@ -1,19 +1,20 @@
 `timescale 1ns / 1ps
 
 module decode (
-    input  logic                      clk,
-    input  logic                      reset,
-    input  logic                      we,              // ~(stall || flush)
+    input  logic clk,
+    input  logic reset,
+    input  logic we,              // ~(stall || flush)
     // IF/ID pipeline register inputs
-    input  fetch_pkg::if_id_t         if_id,           // {pc, pc_plus4, instr}
+    input  fetch_pkg::if_id_t if_id,           // {pc, pc_plus4, instr}
     // Write-back inputs
-    input  logic               [31:0] wb_data,         // from MEM/WB
-    input  logic               [ 4:0] wb_addr,
-    input  logic                      wb_we,
+    input  logic [31:0] wb_data,         // from MEM/WB
+    input  logic [4:0] wb_addr,
+    input  logic wb_we,
+    input  logic take_branch,
     // Hazard detection output
-    output logic                      load_use_stall,
+    output logic load_use_stall,
     // ID/EX pipeline register output
-    output decode_pkg::id_ex_t        id_ex
+    output decode_pkg::id_ex_t id_ex
 );
   import fetch_pkg::*;
   import decode_pkg::*;
@@ -24,11 +25,11 @@ module decode (
   logic [2:0] funct3;
   logic       funct7_5;
 
-  assign opcode   = if_id.instr[6:0];
-  assign rd       = if_id.instr[11:7];
-  assign funct3   = if_id.instr[14:12];
-  assign rs1      = if_id.instr[19:15];
-  assign rs2      = if_id.instr[24:20];
+  assign opcode = if_id.instr[6:0];
+  assign rd = if_id.instr[11:7];
+  assign funct3 = if_id.instr[14:12];
+  assign rs1 = if_id.instr[19:15];
+  assign rs2 = if_id.instr[24:20];
   assign funct7_5 = if_id.instr[30];
 
   // Register file
@@ -86,11 +87,11 @@ module decode (
   logic [31:0] selected_imm;
   always_comb begin
     case (ImmSel)
-      IMM_I:   selected_imm = imm_i;
-      IMM_S:   selected_imm = imm_s;
-      IMM_B:   selected_imm = imm_b;
-      IMM_U:   selected_imm = imm_u;
-      IMM_J:   selected_imm = imm_j;
+      IMM_I: selected_imm = imm_i;
+      IMM_S: selected_imm = imm_s;
+      IMM_B: selected_imm = imm_b;
+      IMM_U: selected_imm = imm_u;
+      IMM_J: selected_imm = imm_j;
       default: selected_imm = 32'd0;
     endcase
   end
@@ -99,25 +100,27 @@ module decode (
   always_ff @(posedge clk or posedge reset) begin
     if (reset) begin
       id_ex <= '0;
+    end else if (take_branch) begin
+      id_ex <= '0;
     end else if (we) begin
       id_ex.pc_plus4 <= if_id.pc_plus4;
       id_ex.rs1_data <= rs1_data;
       id_ex.rs2_data <= rs2_data;
-      id_ex.imm      <= selected_imm;
-      id_ex.rs1      <= rs1;
-      id_ex.rs2      <= rs2;
-      id_ex.rd       <= rd;
-      id_ex.funct3   <= funct3;
+      id_ex.imm <= selected_imm;
+      id_ex.rs1 <= rs1;
+      id_ex.rs2 <= rs2;
+      id_ex.rd <= rd;
+      id_ex.funct3 <= funct3;
       id_ex.funct7_5 <= funct7_5;
       // control signals
       id_ex.RegWrite <= RegWrite;
-      id_ex.MemRead  <= MemRead;
+      id_ex.MemRead <= MemRead;
       id_ex.MemWrite <= MemWrite;
       id_ex.MemToReg <= MemToReg;
-      id_ex.Branch   <= Branch;
-      id_ex.ALUOp    <= ALUOp;
-      id_ex.ALUSrc   <= ALUSrc;
-      id_ex.ImmSel   <= ImmSel;
+      id_ex.Branch <= Branch;
+      id_ex.ALUOp <= ALUOp;
+      id_ex.ALUSrc <= ALUSrc;
+      id_ex.ImmSel <= ImmSel;
     end
   end
 endmodule
