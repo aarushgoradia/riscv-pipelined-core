@@ -9,6 +9,11 @@ module imem #(
   // declare your memory array
     logic [31:0] mem [0:(1<<ADDR_WIDTH)-1];
 
+  // Initialize memory with a hex file
+  initial begin
+    $readmemh("imem_init.hex", mem);
+  end
+
   // synchronous read
     always_ff @(posedge clk) begin
         data <= mem[addr];

@@ -1,4 +1,8 @@
 `timescale 1ns/1ps
+    
+import decode_pkg::*;
+import execute_pkg::*;
+import memory_pkg::*;
 
 module execute(
     input logic clk,
@@ -10,13 +14,9 @@ module execute(
     // MEM/WB pipeline register inputs
     input execute_pkg::mem_wb_t mem_wb,
     // Outputs
-    output logic take_branch
-    output execute_pkg::ex_mem_t ex_mem,
+    output logic take_branch,
+    output execute_pkg::ex_mem_t ex_mem
 );
-    
-    import decode_pkg::*;
-    import execute_pkg::*;
-    import memory_pkg::*;
 
     // Forwarding unit
     logic [1:0] forward_a, forward_b;
@@ -100,3 +100,4 @@ module execute(
             ex_mem.mem_to_reg <= id_ex_.MemToReg;
         end
     end
+endmodule

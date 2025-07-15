@@ -32,3 +32,4 @@ module alu(
         zero_flag = (result == 32'd0);
         lt_flag = ($signed(in1) < $signed(in2));
     end
+endmodule

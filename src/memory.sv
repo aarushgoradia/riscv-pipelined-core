@@ -23,7 +23,7 @@ module memory (
         .dout(dmem_data) // Data read (to be used in MEM/WB)
     );
 
-    always _ff @(posedge clk or posedge reset) begin
+    always_ff @(posedge clk or posedge reset) begin
         if (reset) begin
             mem_wb <= '0; // Reset MEM/WB register
         end else begin
@@ -32,7 +32,6 @@ module memory (
             mem_wb.rd <= ex_mem.rd;
             mem_wb.RegWrite <= ex_mem.RegWrite;
             mem_wb.MemToReg <= ex_mem.MemToReg;
-            };
         end
     end
 endmodule
