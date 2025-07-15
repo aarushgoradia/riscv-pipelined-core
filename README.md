@@ -4,6 +4,12 @@ This repository contains a work-in-progress SystemVerilog implementation of a 5-
 
 ---
 
+## Datapath Diagram
+
+![image](DATAPATH.JPEG)
+
+---
+
 ## Motivation & Design Choices
 
 - **From single-cycle to pipeline**  
@@ -75,12 +81,6 @@ This repository contains a work-in-progress SystemVerilog implementation of a 5-
 - **Add dynamic branch predictor** (1-bit/2-bit BHT, BTB) for control-hazard reduction  
 - **Synthesis & FPGA prototyping** on a small development board  
 - **Documentation**: finalize datapath diagram (computer drawn instead of by hand) and include timing/performance analysis  
-
----
-
-## Datapath Diagram
-
-
 
 ---
 
