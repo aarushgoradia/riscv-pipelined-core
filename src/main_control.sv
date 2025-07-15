@@ -3,7 +3,7 @@
 module main_control (
     input logic [6:0] opcode,
     input logic [2:0] funct3,
-    intput logic funct7_5,
+    input logic funct7_5,
     output logic reg_write,
     output logic mem_read,
     output logic mem_write,
