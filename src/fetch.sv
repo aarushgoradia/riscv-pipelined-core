@@ -14,11 +14,11 @@ module fetch #(
   output logic [31:0] instr           // fetched instruction
 );
 
-  // internal nets
+  // Internal nets
   logic [31:0] next_pc;
   logic [ADDR_WIDTH-1:0] imem_addr;
   
-  // 1) PC register
+  // PC register
   pc_reg u_pc_reg (
     .clk     (clk),
     .reset   (reset),
@@ -27,14 +27,14 @@ module fetch #(
     .pc      (pc)
   );
 
-  // 2–4) combinational logic: PC+4, next_pc MUX, and IMEM address
+  // Combinational logic: PC+4, next_pc MUX, and IMEM address
   always_comb begin
     pc_plus4  = pc + 32'd4;
     next_pc   = take_branch ? branch_target : pc_plus4;
     imem_addr = pc[ADDR_WIDTH+1:2];
   end
 
-  // 5) Instruction memory
+  // Instruction memory
   imem #(.ADDR_WIDTH(ADDR_WIDTH)) u_imem (
     .clk  (clk),
     .addr (imem_addr),
