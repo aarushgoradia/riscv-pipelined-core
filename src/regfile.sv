@@ -1,3 +1,5 @@
+`timescale 1ps/1ps
+
 module regfile(
     input logic clk,               // clock
     input logic we,                // write-enable
