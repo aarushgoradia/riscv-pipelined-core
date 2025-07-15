@@ -79,7 +79,6 @@ This repository contains a work-in-progress SystemVerilog implementation of a 5-
 
 - **Complete UVM testbench** with directed and constrained-random tests, functional coverage  
 - **Add dynamic branch predictor** (1-bit/2-bit BHT, BTB) for control-hazard reduction  
-- **Synthesis & FPGA prototyping** on a small development board  
 - **Documentation**: finalize datapath diagram (computer drawn instead of by hand) and include timing/performance analysis  
 
 ---
