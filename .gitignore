@@ -1,0 +1,27 @@
+# obj_dir: Verilator’s build directory
+obj_dir/
+
+# Waveform dumps
+*.vcd
+*.vpd
+
+# Coverage files (if you add coverage later)
+coverage.dat
+*.gcda
+*.gcno
+
+# Editor swap/backup files
+*~
+*.swp
+*.swo
+*.swn
+
+# macOS Finder
+.DS_Store
+
+# Windows thumbnail cache
+Thumbs.db
+
+# C/C++ build artifacts (if any)
+*.o
+*.exe

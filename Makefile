@@ -16,6 +16,8 @@ VERILATOR_FLAGS := \
   -Wall \
   --trace \
   --cc \
+  --no-timing \
+  -Wno-fatal \
   --top-module $(TOP)
 
 # Source lists
@@ -54,7 +56,7 @@ all: $(SIM_EXE)
 # Build the Verilator simulation
 $(SIM_EXE): $(TB_SV) $(RTL_SV)
 	@echo "=== Verilating $(TOP) ==="
-	$(VERILATOR) $(VERILATOR_FLAGS) $(TB_SV) --exe $(RTL_SV)
+	$(VERILATOR) $(VERILATOR_FLAGS) $(TB_SV) --exe tb/tb_cpu.cpp $(RTL_SV)
 	@echo "=== Building C++ simulator ==="
 	$(MAKE) -C obj_dir -f V$(TOP).mk -j
 

@@ -1,6 +1,6 @@
 `timescale 1ns/1ps
 
-module branch_unit(
+module branch(
     input logic branch,               // Branch signal
     input logic [2:0] funct3,         // Function code for branch type
     input logic zero_flag,           // Zero flag from ALU

@@ -61,17 +61,17 @@ module decode (
   logic [1:0] ALUOp;
   logic [2:0] ImmSel;
   main_control u_main_ctrl (
-      .opcode  (opcode),
-      .funct3  (funct3),
-      .funct7_5(funct7_5),
-      .RegWrite(RegWrite),
-      .MemRead (MemRead),
-      .MemWrite(MemWrite),
-      .MemToReg(MemToReg),
-      .Branch  (Branch),
-      .ALUOp   (ALUOp),
-      .ALUSrc  (ALUSrc),
-      .ImmSel  (ImmSel)
+      .opcode    (opcode),
+      .funct3    (funct3),
+      .funct7_5  (funct7_5),
+      .reg_write (RegWrite),
+      .mem_read  (MemRead),
+      .mem_write (MemWrite),
+      .mem_to_reg(MemToReg),
+      .branch    (Branch),
+      .alu_op    (ALUOp),
+      .alu_src   (ALUSrc),
+      .imm_sel   (ImmSel)
   );
 
   // Hazard detection for load-use
@@ -82,6 +82,13 @@ module decode (
       .if_id_rs2     (rs2),
       .load_use_stall(load_use_stall)
   );
+
+  // Immediate select constants (matching main_control.sv)
+  localparam [2:0] IMM_I = 3'd0;
+  localparam [2:0] IMM_S = 3'd1;
+  localparam [2:0] IMM_B = 3'd2;
+  localparam [2:0] IMM_U = 3'd3;
+  localparam [2:0] IMM_J = 3'd4;
 
   // Immediate select
   logic [31:0] selected_imm;

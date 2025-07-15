@@ -24,14 +24,31 @@ module cpu (
 
   // Fetch stage
   logic [31:0] branch_target;
+  logic [31:0] pc, pc_plus4, instr;
+  
   fetch fetch_i (
     .clk           (clk),
     .reset         (reset),
     .we            (write_en),
     .take_branch   (take_branch),
     .branch_target (branch_target),
-    .if_id         (if_id)
+    .pc            (pc),
+    .pc_plus4      (pc_plus4),
+    .instr         (instr)
   );
+
+  // Pack fetch outputs into IF/ID pipeline register
+  always_ff @(posedge clk or posedge reset) begin
+    if (reset) begin
+      if_id <= '0;
+    end else if (take_branch) begin
+      if_id <= '0;  // Flush on branch
+    end else if (write_en) begin
+      if_id.pc <= pc;
+      if_id.pc_plus4 <= pc_plus4;
+      if_id.instr <= instr;
+    end
+  end
 
   // Decode stage
   logic [4:0]  wb_addr;   // write-back register index
@@ -45,6 +62,7 @@ module cpu (
     .wb_data        (wb_data),
     .wb_addr        (wb_addr),
     .wb_we          (wb_we),
+    .take_branch    (take_branch),
     .load_use_stall (load_use_stall),
     .id_ex          (id_ex)
   );
