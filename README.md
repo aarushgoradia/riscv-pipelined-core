@@ -75,6 +75,40 @@ This repository contains a work-in-progress SystemVerilog implementation of a 5-
 
 ---
 
+## Build & Simulation Instructions
+
+### Prerequisites
+- [Verilator](https://www.veripool.org/verilator/) (v5.x recommended)
+- [GTKWave](http://gtkwave.sourceforge.net/) for waveform viewing
+- C++ compiler (e.g., clang++, g++)
+
+### Steps
+1. **Clone the repository:**
+   ```sh
+   git clone <repo-url>
+   cd riscv-pipelined-core
+   ```
+2. **Build the simulator:**
+   ```sh
+   make clean
+   make
+   ```
+3. **Run the simulation:**
+   ```sh
+   make sim
+   ```
+   This will execute the C++ testbench and generate `tb_cpu.vcd` waveform.
+4. **View the waveform:**
+   ```sh
+   make wave
+   ```
+   This opens GTKWave for visual inspection of pipeline activity.
+
+### Customizing the Program
+- Edit `imem_init.hex` to change the instructions loaded into instruction memory.
+
+---
+
 ## Next Steps
 
 - **Complete UVM testbench** with directed and constrained-random tests, functional coverage  
