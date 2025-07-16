@@ -1,6 +1,6 @@
 # 5-Stage Pipelined RV32I Core
 
-This repository contains a work-in-progress SystemVerilog implementation of a 5-stage pipelined RV32I (base integer) RISC-V core, along with a UVM testbench (coming soon). The goal of this project is to gain hands-on experience with RISC-V instruction encoding, pipeline organization, and hazard mitigation techniques.
+This repository contains a SystemVerilog implementation of a 5-stage pipelined RV32I (base integer) RISC-V core, along with a UVM testbench (Work in Progress). The goal of this project is to gain hands-on experience with RISC-V instruction encoding, pipeline organization, and hazard mitigation techniques.
 
 ---
 
