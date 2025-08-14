@@ -74,14 +74,8 @@ module decode (
       .imm_sel   (ImmSel)
   );
 
-  // Hazard detection for load-use
-  hazard_detect u_hazard (
-      .id_ex_mem_read(id_ex.MemRead),
-      .id_ex_rd      (id_ex.rd),
-      .if_id_rs1     (rs1),
-      .if_id_rs2     (rs2),
-      .load_use_stall(load_use_stall)
-  );
+  // Hazard detection for load-use (simplified - disable for now)
+  assign load_use_stall = 1'b0; // TODO: implement proper hazard detection
 
   // Immediate select constants (matching main_control.sv)
   localparam [2:0] IMM_I = 3'd0;

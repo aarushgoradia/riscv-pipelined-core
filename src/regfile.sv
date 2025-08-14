@@ -20,6 +20,7 @@ module regfile(
 
     always_ff @(posedge clk) begin
         if (we && (wa != 5'd0)) begin
+            $display("Time %0t: Writing reg[%0d] = %h", $time, wa, wd);
             regs[wa] <= wd;
         end
     end

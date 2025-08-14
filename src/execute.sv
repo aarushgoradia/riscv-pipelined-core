@@ -15,7 +15,8 @@ module execute(
     input memory_pkg::mem_wb_t mem_wb,
     // Outputs
     output logic take_branch,
-    output execute_pkg::ex_mem_t ex_mem
+    output execute_pkg::ex_mem_t ex_mem,
+    output logic [31:0] branch_target
 );
 
     // Forwarding unit
@@ -96,6 +97,9 @@ module execute(
         .lt_flag(lt_flag),
         .take_branch(take_branch)
     );
+
+    // Branch target calculation
+    assign branch_target = alu_result;
 
     // EX/MEM pipeline register
     always_ff @(posedge clk or posedge reset) begin

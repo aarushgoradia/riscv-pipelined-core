@@ -8,16 +8,16 @@ module alu_control (
 );
   always_comb begin
     unique case (ALUOp)
-      2'b00: alu_ctrl = 4'b0012[3:0]; // loads/stores -> ADD (0010)
-      2'b01: alu_ctrl = 4'b0110;      // branches     -> SUB (0110)
-      2'b10: begin                    // R-type / OP-IMM
+      2'b00: alu_ctrl = 4'b0010; // loads/stores -> ADD
+      2'b01: alu_ctrl = 4'b0110; // branches     -> SUB (0110)
+      2'b10: begin               // R-type / OP-IMM
         unique case ({funct7_5, funct3})
           4'b0_000: alu_ctrl = 4'b0010; // ADD/ADDI
           4'b1_000: alu_ctrl = 4'b0110; // SUB
-          4'b0_001: alu_ctrl = 4'b1001; // SLL/SLLI
+          4'b0_001: alu_ctrl = 4'b0100; // SLL/SLLI
           4'b0_010: alu_ctrl = 4'b1000; // SLT/SLTI
-          4'b0_011: alu_ctrl = 4'b1010; // SLTU/SLTIU
-          4'b0_100: alu_ctrl = 4'b0013[3:0]; // XOR/XORI (0011)
+          4'b0_011: alu_ctrl = 4'b1001; // SLTU/SLTIU
+          4'b0_100: alu_ctrl = 4'b0011; // XOR/XORI
           4'b0_101: alu_ctrl = 4'b0101; // SRL/SRLI
           4'b1_101: alu_ctrl = 4'b0111; // SRA/SRAI
           4'b0_110: alu_ctrl = 4'b0001; // OR/ORI

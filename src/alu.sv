@@ -21,12 +21,12 @@ module alu(
             4'b0100: result = in1 << in2[4:0]; // SLL
             4'b1000: result = ($signed(in1) < $signed(in2)) ? 32'd1 : 32'd0; // SLT
             4'b1001: result = (in1 < in2) ? 32'd1 : 32'd0; // SLTU
-            4'b1010: result = ($unsigned(in1) < $unsigned(in2)) ? 32'd1 : 32'd0; // SLTU
             4'b0011: result = in1 ^ in2; // XOR
             4'b0101: result = in1 >> in2[4:0]; // SRL
             4'b0111: result = $signed(in1) >>> in2[4:0]; // SRA
             4'b0001: result = in1 | in2; // OR
             4'b0000: result = in1 & in2; // AND
+            default: result = 32'd0; // Default case
         endcase
 
         // Set flags

@@ -20,7 +20,7 @@ module cpu (
   // stall/flush control
   logic load_use_stall;  
   logic take_branch;     
-  logic write_en = ~(load_use_stall || take_branch);
+  logic write_en = ~load_use_stall; // Don't include take_branch here to avoid loop
 
   // Fetch stage
   logic [31:0] branch_target;
@@ -75,9 +75,9 @@ module cpu (
     .ex_mem_old  (ex_mem),
     .mem_wb      (mem_wb),
     .take_branch (take_branch),
-    .ex_mem      (ex_mem)
+    .ex_mem      (ex_mem),
+    .branch_target (branch_target)
   );
-  assign branch_target = ex_mem.alu_result;
 
   // Memory stage
   memory memory_i (

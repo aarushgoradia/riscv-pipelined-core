@@ -27,6 +27,13 @@ module fetch #(
     .pc      (pc)
   );
 
+  // Debug: print PC and instruction
+  always_ff @(posedge clk) begin
+    if (!reset) begin
+      $display("Time %0t: PC=%h, INSTR=%h, WE=%b", $time, pc, instr, we);
+    end
+  end
+
   // Combinational logic: PC+4, next_pc MUX, and IMEM address
   always_comb begin
     pc_plus4  = pc + 32'd4;

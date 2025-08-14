@@ -51,7 +51,7 @@ module main_control (
             7'b1100011: begin // BRANCH
                 branch = 1'b1;
                 alu_op = 2'b01;
-                alu_src = 1'b1;
+                alu_src = 1'b0;
                 imm_sel = IMM_B;
             end
             7'b0010011: begin // ALU-IMM
@@ -68,7 +68,7 @@ module main_control (
             7'b1101111: begin // JAL
                 reg_write = 1'b1;
                 alu_op = 2'b00;
-                alu_src = 1'b1
+                alu_src = 1'b1;
                 imm_sel = IMM_J;
             end
             7'b1100111: begin // JALR
