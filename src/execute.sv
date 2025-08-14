@@ -53,7 +53,18 @@ module execute(
 
     // ALU operation selection
     logic [31:0] alu_in1, alu_in2;
-    assign alu_in1 = id_ex.Branch ? id_ex.pc_plus4 : fwdA_data;
+    logic [31:0] pc_ex = id_ex.pc_plus4 - 32'd4;
+
+    localparam logic [2:0] IMM_I = 3'd0, IMM_J = 3'd4;
+    logic is_jal_ex  = (id_ex.ImmSel == IMM_J) && id_ex.ALUSrc && (id_ex.ALUOp == 2'b00) && id_ex.RegWrite;
+    logic is_jalr_ex = (id_ex.ImmSel == IMM_I) && id_ex.ALUSrc && (id_ex.ALUOp == 2'b00) && id_ex.RegWrite && (id_ex.funct3 == 3'b000);
+    
+    logic [31:0] base_for_target =
+    is_jalr_ex                 ? fwdA_data :
+    (id_ex.Branch || is_jal_ex) ? pc_ex     :
+                                  fwdA_data;
+
+    assign alu_in1 = base_for_target;
     assign alu_in2 = id_ex.ALUSrc ? id_ex.imm : fwdB_data;
 
     // ALU Control

@@ -10,10 +10,11 @@ module hazard_detect(
 
   // Load-use hazard detection
   always_comb begin
-    if (id_ex_mem_read && (id_ex_rd == if_id_rs1 || id_ex_rd == if_id_rs2)) begin
-      load_use_stall = 1'b1; // Stall if a load instruction is followed by a dependent instruction
-    end else begin
-      load_use_stall = 1'b0; // No stall otherwise
+    load_use_stall = 1'b0;
+    if ( id_ex_mem_read
+        && (id_ex_rd != 5'd0)
+        && ( (id_ex_rd == if_id_rs1) || (id_ex_rd == if_id_rs2) ) ) begin
+      load_use_stall = 1'b1; // Stall if a load is followed by a dependent instr
     end
   end
 endmodule

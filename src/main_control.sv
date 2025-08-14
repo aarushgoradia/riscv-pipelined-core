@@ -34,7 +34,7 @@ module main_control (
         imm_sel = IMM_I;
 
         case (opcode)
-            7'b000011: begin // LOAD
+            7'b0000011: begin // LOAD
                 mem_read = 1'b1;
                 reg_write = 1'b1;
                 mem_to_reg = 1'b1;
@@ -68,6 +68,7 @@ module main_control (
             7'b1101111: begin // JAL
                 reg_write = 1'b1;
                 alu_op = 2'b00;
+                alu_src = 1'b1
                 imm_sel = IMM_J;
             end
             7'b1100111: begin // JALR
