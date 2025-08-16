@@ -7,20 +7,22 @@ import execute_pkg::*;
 import memory_pkg::*;
 
 module cpu (
-    input  logic clk,    // clock
-    input  logic reset   // reset, active high
+  input  logic clk,    // clock
+  input  logic reset   // reset, active high
 );
 
   // pipeline registers
   fetch_pkg::if_id_t    if_id;    // IF → ID
   decode_pkg::id_ex_t   id_ex;    // ID → EX
-  execute_pkg::ex_mem_t ex_mem;   // EX → MEM
+  execute_pkg::ex_mem_t ex_mem_reg;   // EX → MEM registered
+  execute_pkg::ex_mem_t ex_mem_next;  // combinational from execute
   memory_pkg::mem_wb_t  mem_wb;   // MEM → WB
 
   // stall/flush control
   logic load_use_stall;  
   logic take_branch;     
-  logic write_en = ~load_use_stall; // Don't include take_branch here to avoid loop
+  logic write_en; // PC / IF enable
+  assign write_en = ~load_use_stall; // continuous so it isn't stuck at X
 
   // Fetch stage
   logic [31:0] branch_target;
@@ -42,7 +44,7 @@ module cpu (
     if (reset) begin
       if_id <= '0;
     end else if (take_branch) begin
-      if_id <= '0;  // Flush on branch
+      if_id <= '0;  // Flush on taken branch immediately (same cycle branch resolves)
     end else if (write_en) begin
       if_id.pc <= pc;
       if_id.pc_plus4 <= pc_plus4;
@@ -69,21 +71,28 @@ module cpu (
 
   // Execute stage
   execute execute_i (
-    .clk         (clk),
-    .reset       (reset),
-    .id_ex       (id_ex),
-    .ex_mem_old  (ex_mem),
-    .mem_wb      (mem_wb),
-    .take_branch (take_branch),
-    .ex_mem      (ex_mem),
-    .branch_target (branch_target)
+    .id_ex        (id_ex),
+    .ex_mem_prev  (ex_mem_reg),
+    .mem_wb       (mem_wb),
+    .take_branch  (take_branch),
+    .ex_mem_next  (ex_mem_next),
+    .branch_target(branch_target)
   );
+
+  // EX/MEM pipeline register
+  always_ff @(posedge clk or posedge reset) begin
+    if (reset) begin
+      ex_mem_reg <= '0;
+    end else begin
+      ex_mem_reg <= ex_mem_next;
+    end
+  end
 
   // Memory stage
   memory memory_i (
     .clk    (clk),
     .reset  (reset),
-    .ex_mem (ex_mem),
+    .ex_mem (ex_mem_reg),
     .mem_wb (mem_wb)
   );
 

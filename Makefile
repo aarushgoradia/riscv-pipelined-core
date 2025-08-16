@@ -1,78 +1,58 @@
-# Makefile for Verilator + GTKWave simulation of the pipelined RV32I CPU
+## Makefile for Icarus Verilog (iverilog + vvp) simulation of the pipelined RV32I CPU
 
-# directories
 SRC_DIR := src
 TB_DIR  := tb
+BUILD   := build
 
-# top-level testbench (module + harness)
-TOP    := tb_simple
-TB_SV  := $(TB_DIR)/tb_simple.sv
-TB_CPP := $(TB_DIR)/tb_simple.cpp
+TOP     := tb_simple
+TB_SV   := $(TB_DIR)/tb_simple.sv
 
-# tools
-VERILATOR := verilator
-GTKWAVE   := gtkwave
-
-# Verilator options
-VERILATOR_FLAGS := \
-    -Wall \
-    --trace \
-    --no-timing \
-    --Wno-fatal \
-    --cc \
-    --top-module $(TOP)
-
-# all your RTL
 RTL_SV := \
-    $(SRC_DIR)/fetch_pkg.sv   \
-    $(SRC_DIR)/decode_pkg.sv  \
+    $(SRC_DIR)/fetch_pkg.sv \
+    $(SRC_DIR)/decode_pkg.sv \
     $(SRC_DIR)/execute_pkg.sv \
-    $(SRC_DIR)/memory_pkg.sv  \
-    $(SRC_DIR)/pc_reg.sv      \
-    $(SRC_DIR)/imem.sv        \
-    $(SRC_DIR)/fetch.sv       \
-    $(SRC_DIR)/regfile.sv     \
-    $(SRC_DIR)/imm_gen.sv     \
-    $(SRC_DIR)/main_control.sv\
-    $(SRC_DIR)/hazard_detect.sv\
-    $(SRC_DIR)/decode.sv      \
+    $(SRC_DIR)/memory_pkg.sv \
+    $(SRC_DIR)/pc_reg.sv \
+    $(SRC_DIR)/imem.sv \
+    $(SRC_DIR)/fetch.sv \
+    $(SRC_DIR)/regfile.sv \
+    $(SRC_DIR)/imm_gen.sv \
+    $(SRC_DIR)/main_control.sv \
+    $(SRC_DIR)/hazard_detect.sv \
+    $(SRC_DIR)/decode.sv \
     $(SRC_DIR)/forwarding_unit.sv \
     $(SRC_DIR)/alu_control.sv \
-    $(SRC_DIR)/alu.sv         \
-    $(SRC_DIR)/branch.sv      \
-    $(SRC_DIR)/execute.sv     \
-    $(SRC_DIR)/dmem.sv        \
-    $(SRC_DIR)/memory.sv      \
-    $(SRC_DIR)/writeback.sv   \
+    $(SRC_DIR)/alu.sv \
+    $(SRC_DIR)/branch.sv \
+    $(SRC_DIR)/execute.sv \
+    $(SRC_DIR)/dmem.sv \
+    $(SRC_DIR)/memory.sv \
+    $(SRC_DIR)/writeback.sv \
     $(SRC_DIR)/cpu.sv
 
-# the Verilator‑built simulator
-SIM_EXE := obj_dir/V$(TOP)
+VVP     := $(BUILD)/$(TOP).vvp
 
-.PHONY: all sim wave clean
+ICARUS_FLAGS := -g2012 -Wall
 
-all: $(SIM_EXE)
+.PHONY: all sim wave clean dirs
 
-# build the Verilator simulation (SV TB + C++ harness + RTL)
-$(SIM_EXE): $(TB_SV) $(TB_CPP) $(RTL_SV)
-	@echo "=== Verilating $(TOP) ==="
-	$(VERILATOR) $(VERILATOR_FLAGS) \
-	    $(TB_SV) $(TB_CPP) \
-	    --exe $(RTL_SV)
-	@echo "=== Building C++ simulator ==="
-	$(MAKE) -C obj_dir -f V$(TOP).mk -j
+all: sim
 
-# run the simulator
-sim: all
-	@echo "=== Running simulation ==="
-	$(SIM_EXE)
+dirs:
+	@mkdir -p $(BUILD)
 
-# open GTKWave on the resulting VCD
+$(VVP): dirs $(TB_SV) $(RTL_SV) imem_init.hex
+	@echo "=== Compiling with Icarus (iverilog) ==="
+	iverilog $(ICARUS_FLAGS) -o $(VVP) $(RTL_SV) $(TB_SV)
+
+sim: $(VVP)
+	@echo "=== Running simulation (vvp) ==="
+	vvp $(VVP)
+
 wave: sim
-	@echo "=== Launching GTKWave ==="
-	$(GTKWAVE) tb_simple.vcd &
+	@echo "Open tb_simple.vcd with GTKWave (if installed)"
+	@which gtkwave >/dev/null 2>&1 && gtkwave tb_simple.vcd & || echo "gtkwave not found"
 
-# clean out all auto‑generated files
 clean:
-	@echo "=== Cleaning ==="
-	rm -rf obj_dir *.vcd
+	@echo "=== Cleaning (Icarus) ==="
+	rm -rf $(BUILD) *.vcd

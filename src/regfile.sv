@@ -14,6 +14,14 @@ module regfile(
     // Register file memory array
     logic [31:0] regs [31:0];
 
+    // Initialize registers to zero to avoid X propagation in simulation
+    integer i;
+    initial begin
+        for (i = 0; i < 32; i = i + 1) begin
+            regs[i] = 32'd0;
+        end
+    end
+
     // Read ports
     assign rd1 = (ra1 != 5'd0) ? regs[ra1] : 32'd0;
     assign rd2 = (ra2 != 5'd0) ? regs[ra2] : 32'd0;

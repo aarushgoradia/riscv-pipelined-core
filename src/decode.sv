@@ -74,8 +74,15 @@ module decode (
       .imm_sel   (ImmSel)
   );
 
-  // Hazard detection for load-use (simplified - disable for now)
-  assign load_use_stall = 1'b0; // TODO: implement proper hazard detection
+  // Load-use hazard detection: if previous instruction (now in EX stage via id_ex) is a load
+  // and destination matches current rs1/rs2, request a stall.
+  // id_ex.MemRead corresponds to the instruction that was in ID last cycle (now entering EX)
+  always_comb begin
+    load_use_stall = 1'b0;
+    if (id_ex.MemRead && (id_ex.rd != 5'd0) && ((id_ex.rd == rs1) || (id_ex.rd == rs2))) begin
+      load_use_stall = 1'b1;
+    end
+  end
 
   // Immediate select constants (matching main_control.sv)
   localparam [2:0] IMM_I = 3'd0;
@@ -103,7 +110,11 @@ module decode (
       id_ex <= '0;
     end else if (take_branch) begin
       id_ex <= '0;
+    end else if (load_use_stall) begin
+      // Insert bubble instead of propagating dependent instruction
+      id_ex <= '0;
     end else if (we) begin
+  $display("[DECODE] time=%0t instr=%h rs1=%0d rs2=%0d rd=%0d opcode=%b imm=%h", $time, if_id.instr, rs1, rs2, rd, opcode, selected_imm);
       id_ex.pc_plus4 <= if_id.pc_plus4;
       id_ex.rs1_data <= rs1_data;
       id_ex.rs2_data <= rs2_data;

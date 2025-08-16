@@ -1,0 +1,70 @@
+#!/usr/bin/env make
+# Original Verilator Makefile preserved as Makefile.verilator after migration to Icarus
+
+# directories
+SRC_DIR := src
+TB_DIR  := tb
+
+TOP    := tb_simple
+TB_SV  := $(TB_DIR)/tb_simple.sv
+TB_CPP := $(TB_DIR)/tb_simple.cpp
+
+VERILATOR := verilator
+GTKWAVE   := gtkwave
+
+VERILATOR_FLAGS := \
+    -Wall \
+    --trace \
+    --no-timing \
+    --Wno-fatal \
+    --cc \
+    --top-module $(TOP)
+
+RTL_SV := \
+    $(SRC_DIR)/fetch_pkg.sv   \
+    $(SRC_DIR)/decode_pkg.sv  \
+    $(SRC_DIR)/execute_pkg.sv \
+    $(SRC_DIR)/memory_pkg.sv  \
+    $(SRC_DIR)/pc_reg.sv      \
+    $(SRC_DIR)/imem.sv        \
+    $(SRC_DIR)/fetch.sv       \
+    $(SRC_DIR)/regfile.sv     \
+    $(SRC_DIR)/imm_gen.sv     \
+    $(SRC_DIR)/main_control.sv\
+    $(SRC_DIR)/hazard_detect.sv\
+    $(SRC_DIR)/decode.sv      \
+    $(SRC_DIR)/forwarding_unit.sv \
+    $(SRC_DIR)/alu_control.sv \
+    $(SRC_DIR)/alu.sv         \
+    $(SRC_DIR)/branch.sv      \
+    $(SRC_DIR)/execute.sv     \
+    $(SRC_DIR)/dmem.sv        \
+    $(SRC_DIR)/memory.sv      \
+    $(SRC_DIR)/writeback.sv   \
+    $(SRC_DIR)/cpu.sv
+
+SIM_EXE := obj_dir/V$(TOP)
+
+.PHONY: all sim wave clean
+
+all: $(SIM_EXE)
+
+$(SIM_EXE): $(TB_SV) $(TB_CPP) $(RTL_SV)
+	@echo "=== Verilating $(TOP) ==="
+	$(VERILATOR) $(VERILATOR_FLAGS) \
+	    $(TB_SV) $(TB_CPP) \
+	    --exe $(RTL_SV)
+	@echo "=== Building C++ simulator ==="
+	$(MAKE) -C obj_dir -f V$(TOP).mk -j
+
+sim: all
+	@echo "=== Running simulation ==="
+	$(SIM_EXE)
+
+wave: sim
+	@echo "=== Launching GTKWave ==="
+	$(GTKWAVE) tb_simple.vcd &
+
+clean:
+	@echo "=== Cleaning (Verilator) ==="
+	rm -rf obj_dir *.vcd
